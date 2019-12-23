@@ -23,6 +23,11 @@ class Block {
     return new this(timestamp, lastHash, hash, data);
   }
 
+  static blockHash(block) {
+    const { timestamp, lastHash, data } = block;
+    return Block.generateHash(timestamp, lastHash, data);
+  }
+
   toString() {
     return `Block -
             Timestamp : ${this.timestamp}
