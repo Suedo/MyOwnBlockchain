@@ -1,0 +1,10 @@
+Blockchain course @ udemy : Notes
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Block contains:
+1. timestamp in ms
+2. hash of the last Block
+3. hash of itself
+4. data to store in this Block
+
