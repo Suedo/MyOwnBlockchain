@@ -4,12 +4,16 @@
   "description": "based on udemy course on creating a blockchian",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev-test": "nodemon dev-test"
+    "dev-test": "nodemon dev-test",
+    "test": "jest --watchAll"
   },
   "author": "somjit",
   "license": "ISC",
   "devDependencies": {
+    "jest": "^24.9.0",
     "nodemon": "^2.0.2"
+  },
+  "dependencies": {
+    "crypto-js": "^3.1.9-1"
   }
 }
