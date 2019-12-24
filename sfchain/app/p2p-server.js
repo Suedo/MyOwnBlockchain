@@ -14,33 +14,46 @@ class P2PServer {
   listen() {
     const server = new Websocket.Server({ port: P2P_PORT });
     this.connectPeers();
-    // async event handler
     server.on("connection", socket => this.connectSocket(socket));
     console.log(`P2PServer listening on port: ${P2P_PORT}`);
   }
 
+  // connect this node to the peer nodes provided at execution time via env props
   connectPeers() {
     PEERS.forEach(peer => {
-      const socket = new Websocket(peer); // peer is like "ws://localhost:5001"
-      // async event handler
-      socket.on("open", () => this.connectSocket(socket));
+      // connection is established via a new websocket
+      const peerSocket = new Websocket(peer); // peer is like "ws://localhost:5001"
+      peerSocket.on("open", () => this.connectSocket(peerSocket));
     });
   }
 
   // all sockets will go through this connector
-  connectSocket(socket) {
-    this.sockets.push(socket);
+  connectSocket(peerSocket) {
+    this.sockets.push(peerSocket);
     console.log(`Socket connected...`);
-    this.messageHandler(socket);
-    socket.send(JSON.stringify(this.blockChain.chain));
+    this.handleMessageFrom(peerSocket);
+    this.sendChainTo(peerSocket);
   }
 
-  messageHandler(socket) {
-    // async event handler
+  // when a new block is mined, broadcast new updated blockchain to all connected peers
+  broadcastUpdatedChain() {
+    this.sockets.forEach(socket => this.sendChainTo(socket));
+  }
+
+  // each node in blockchain will emit its blockchain in its message
+  handleMessageFrom(socket) {
     socket.on("message", message => {
       const data = JSON.parse(message);
-      console.log(`socket::${P2P_PORT}: message:\n${JSON.stringify(data, null, 2)}`);
+      this.blockChain.replaceChain(data); // 'data' is the peer node's own blockchain
+      console.log(
+        `socket::${P2P_PORT}: message:\n${JSON.stringify(data, null, 2)}`
+      );
     });
+  }
+
+  // send this blockchain to connected peer via the connecting socket
+  sendChainTo(socket) {
+    socket.send(JSON.stringify(this.blockChain.chain));
   }
 }
 

@@ -19,6 +19,9 @@ app.post("/mine", (req, res) => {
   const block = bc.addBlock(req.body.data);
   console.log(`new block added: ${block.toString()}`);
 
+  // new block is mined, send word to all connected peers/nodes
+  p2pServer.broadcastUpdatedChain();
+
   // get the new and updated blockchain
   res.redirect("/blocks");
 });
