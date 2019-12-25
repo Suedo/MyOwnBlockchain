@@ -40,7 +40,7 @@ describe("Block", () => {
   });
 
   it("expects a hash that matches the difficulty", () => {
-    console.log(`block:\n${JSON.stringify(block, null, 2)}`);
+    // console.log(`block:\n${JSON.stringify(block, null, 2)}`);
     expect(block.hash.substring(0, block.difficulty)).toEqual(
       "0".repeat(block.difficulty)
     );

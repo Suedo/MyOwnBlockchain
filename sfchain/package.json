@@ -11,6 +11,9 @@
   },
   "author": "somjit",
   "license": "ISC",
+  "jest": {
+    "testEnvironment": "node"
+  },
   "devDependencies": {
     "jest": "^24.9.0",
     "nodemon": "^2.0.2"
@@ -18,7 +21,9 @@
   "dependencies": {
     "body-parser": "^1.19.0",
     "crypto-js": "^3.1.9-1",
+    "elliptic": "^6.5.2",
     "express": "^4.17.1",
+    "uuid": "^3.3.3",
     "ws": "^7.2.1"
   }
 }

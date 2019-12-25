@@ -1,5 +1,5 @@
-const SHA256 = require("crypto-js/sha256");
 const { DIFFICULTY, MINE_RATE } = require("../config"); // as more miners join the pool, difficulty needs to be increased
+const ChainUtil = require("../chain.util");
 
 class Block {
   constructor(timestamp, lastHash, hash, data, nonce, difficulty) {
@@ -54,9 +54,9 @@ class Block {
   }
 
   static generateHash(timestamp, lastHash, data, nonce, difficulty) {
-    return SHA256(
+    return ChainUtil.hash(
       `${timestamp}${lastHash}${data}${nonce}${difficulty}`
-    ).toString();
+    );
   }
 
   static adjustDifficulty(lastBlock, currentTime) {
