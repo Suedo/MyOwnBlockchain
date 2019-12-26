@@ -73,7 +73,7 @@ describe("Transaction", () => {
         output => output.address === wallet.publicKey
       );
       const amountLeftWithSelf = ownEntryInTXLog.amount;
-      console.log(JSON.stringify(transaction, null, 2));
+      // console.log(JSON.stringify(transaction, null, 2));
       expect(amountLeftWithSelf).toEqual(
         wallet.balance - txAmount - nextAmount
       );

@@ -13,9 +13,9 @@ class Transaction {
     this.outputs = [];
   }
 
-  update(senderWallet, recipientAddr, txAmount) {
+  update(sourceWallet, recipientAddr, txAmount) {
     const ownEntryInTXOutputLog = this.outputs.find(
-      output => output.address === senderWallet.publicKey
+      output => output.address === sourceWallet.publicKey
     );
     const currentBalance = ownEntryInTXOutputLog.amount;
 
@@ -30,16 +30,16 @@ class Transaction {
       amount: txAmount,
       address: recipientAddr
     });
-    Transaction.signTransaction(this, senderWallet);
+    Transaction.signTransaction(this, sourceWallet);
 
     return this;
   }
 
   // a static method to help generate outputs
-  static newTransaction(senderWallet, recipientAddr, txAmount) {
+  static newTransaction(sourceWallet, recipientAddr, txAmount) {
     const transaction = new Transaction();
 
-    if (txAmount > senderWallet.balance) {
+    if (txAmount > sourceWallet.balance) {
       console.log(`Amount: ${txAmount} exceeds balance`);
       return;
     }
@@ -50,25 +50,25 @@ class Transaction {
       ...[
         // this is the updated balance `sent` to self
         {
-          amount: senderWallet.balance - txAmount,
-          address: senderWallet.publicKey
+          amount: sourceWallet.balance - txAmount,
+          address: sourceWallet.publicKey
         },
         // this is the amount sent to the actual recipient
         { amount: txAmount, address: recipientAddr }
       ]
     );
 
-    Transaction.signTransaction(transaction, senderWallet);
+    Transaction.signTransaction(transaction, sourceWallet);
 
     return transaction;
   }
 
-  static signTransaction(transaction, senderWallet) {
+  static signTransaction(transaction, sourceWallet) {
     transaction.input = {
       timestamp: Date.now(),
-      amount: senderWallet.balance,
-      address: senderWallet.publicKey,
-      signature: senderWallet.sign(ChainUtil.hash(transaction.outputs))
+      amount: sourceWallet.balance,
+      address: sourceWallet.publicKey,
+      signature: sourceWallet.sign(ChainUtil.hash(transaction.outputs))
     };
   }
 
