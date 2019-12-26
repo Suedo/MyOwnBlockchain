@@ -16,7 +16,17 @@ class TransactionPool {
     }
   }
 
-  getTxWithPubKey(publicKey) {
+
+  /**
+   * Both getTxForGivenSource and getTxForGivenRecipient aims to do the same thing,
+   * one works with source address, while the other one with recipient address
+   * @param {*} publicKey address of the wallet
+   */
+  getTxForGivenSource(publicKey){
+    return this.transactions.find(t => t.input.address === publicKey)
+  }
+
+  getTxForGivenRecipient(publicKey) {
     return this.transactions.filter(t =>
       t.outputs.some(op => op.address === publicKey)
     )[0]; 

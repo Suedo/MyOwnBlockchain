@@ -28,8 +28,11 @@ class Wallet {
       return;
     }
 
-    let tx = transactionPool.getTxWithPubKey(recipient);
-    // console.log(`getTxWithPubKey: Transaction:\n${JSON.stringify(tx, null, 2)}`);
+    /**
+     * The goal is to find a transaction associated with this sender/source wallet
+     * if it exists, we update the same, else create a new one.
+     */
+    let tx = transactionPool.getTxForGivenSource(this.publicKey);
 
     if (tx) {
       tx.update(this, recipient, amount);
