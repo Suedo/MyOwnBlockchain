@@ -12,6 +12,7 @@ class TransactionPool {
     } else {
       // add
       this.transactions.push(tx);
+      // console.log(`transaction added to pool:\n${JSON.stringify(tx,null,2)}`)
     }
   }
 

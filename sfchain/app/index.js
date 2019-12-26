@@ -12,7 +12,7 @@ const app = express();
 const bc = new Blockchain();
 const wallet = new Wallet();
 const tp = new TransactionPool();
-const p2pServer = new P2PServer(bc);
+const p2pServer = new P2PServer(bc, tp);
 
 app.use(bodyparser.json());
 
@@ -28,7 +28,13 @@ app.post("/transact", (req, res) => {
   const { recipient, amount } = req.body;
   const tx = wallet.createTransaction(recipient, amount, tp);
   // ^^ transaction already updated to pool, so we should now be able to see it
+
+  p2pServer.broadcastTransaction(tx);
   res.redirect("/transactions");
+});
+
+app.get("/public-key", (req, res) => {
+  res.json({ publicKey: wallet.publicKey });
 });
 
 app.post("/mine", (req, res) => {

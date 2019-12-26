@@ -3,11 +3,17 @@ const Websocket = require("ws");
 const P2P_PORT = process.env.P2P_PORT || 5001;
 const PEERS = process.env.PEERS ? process.env.PEERS.split(",") : [];
 
+const MESSAGE_TYPES = {
+  chain: "CHAIN",
+  transaction: "TRANSACTION"
+};
+
 // HTTP_PORT=3002 P2P_PORT=5002 PEERS=ws://localhost:5001,ws://localhost:5002 npm run dev
 
 class P2PServer {
-  constructor(blockChain) {
+  constructor(blockChain, transactionPool) {
     this.blockChain = blockChain;
+    this.transactionPool = transactionPool;
     this.sockets = [];
   }
 
@@ -40,20 +46,51 @@ class P2PServer {
     this.sockets.forEach(socket => this.sendChainTo(socket));
   }
 
+  broadcastTransaction(tx) {
+    console.log(
+      `in broadcastTransaction:\nSocket count: ${this.sockets.length}`
+    );
+
+    this.sockets.forEach(s => this.sendTransactionTo(s, tx));
+  }
+
   // each node in blockchain will emit its blockchain in its message
   handleMessageFrom(socket) {
     socket.on("message", message => {
-      const data = JSON.parse(message);
-      this.blockChain.replaceChain(data); // 'data' is the peer node's own blockchain
-      console.log(
-        `socket::${P2P_PORT}: message:\n${JSON.stringify(data, null, 2)}`
-      );
+      // console.log(
+      //   `Message received:\n${JSON.stringify(JSON.parse(message), null, 2)}`
+      // );
+      const data = JSON.parse(message); // all messages will be an object with a 'type' and a 'value'
+      switch (data.type) {
+        case MESSAGE_TYPES.chain:
+          this.blockChain.replaceChain(data.value);
+          break;
+        case MESSAGE_TYPES.transaction:
+          // console.log("received a transaction message..");
+          this.transactionPool.addOrUpdateTransaction(data.value);
+          break;
+      }
     });
   }
 
   // send this blockchain to connected peer via the connecting socket
   sendChainTo(socket) {
-    socket.send(JSON.stringify(this.blockChain.chain));
+    socket.send(
+      JSON.stringify({
+        type: MESSAGE_TYPES.chain,
+        value: this.blockChain.chain
+      })
+    );
+  }
+
+  sendTransactionTo(socket, tx) {
+    console.log("sending transaction..");
+    socket.send(
+      JSON.stringify({
+        type: MESSAGE_TYPES.transaction,
+        value: tx
+      })
+    );
   }
 }
 
