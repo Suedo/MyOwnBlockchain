@@ -39,14 +39,13 @@ class Transaction {
   static transactionWithOutputs(sourceWallet, outputs) {
     const transaction = new Transaction();
     // the `...` spreads out the array to individual objects for push.
-    transaction.outputs.push(...outputs)
+    transaction.outputs.push(...outputs);
     Transaction.signTransaction(transaction, sourceWallet);
     return transaction;
   }
 
   // a static method to help generate outputs
   static newTransaction(sourceWallet, recipientAddr, txAmount) {
-
     if (txAmount > sourceWallet.balance) {
       console.log(`Amount: ${txAmount} exceeds balance`);
       return;
@@ -54,26 +53,27 @@ class Transaction {
 
     const outputs = [
       // this is the updated balance `sent` to self
-      { 
-        amount: sourceWallet.balance - txAmount, 
-        address: sourceWallet.publicKey 
+      {
+        amount: sourceWallet.balance - txAmount,
+        address: sourceWallet.publicKey
       },
       // this is the amount sent to the actual recipient
       { amount: txAmount, address: recipientAddr }
-    ]
+    ];
 
     return Transaction.transactionWithOutputs(sourceWallet, outputs);
-
   }
   /**
    * blockchainWallet will sign the transaction to verify that it indeed is a reward
    */
   static rewardTransaction(minerWallet, blockchainWallet) {
-    let outputs = [{
-      amount: MINING_REWARD, address: minerWallet.publicKey
-    }]
-    return Transaction.transactionWithOutputs(blockchainWallet, outputs)
-
+    let outputs = [
+      {
+        amount: MINING_REWARD,
+        address: minerWallet.publicKey
+      }
+    ];
+    return Transaction.transactionWithOutputs(blockchainWallet, outputs);
   }
 
   static signTransaction(transaction, sourceWallet) {
@@ -101,12 +101,16 @@ class Transaction {
     let totalOutputReducer = (acc, output) => acc + output.amount;
     let totalOutput = tx.outputs.reduce(totalOutputReducer, 0);
     if (tx.input.amount !== totalOutput) {
-      console.log(`Error: Input and Output amounts dont match for Transaction ${tx.id}`);
+      console.log(
+        `Error: Input and Output amounts dont match for Transaction ${tx.id}`
+      );
       return;
     }
 
     if (!Transaction.isTxSignatureValid(tx)) {
-      console.log(`Error verifying Transaction signature \n${JSON.stringify(tx, null, 2)}`);
+      console.log(
+        `Error verifying Transaction signature \n${JSON.stringify(tx, null, 2)}`
+      );
       return;
     }
 

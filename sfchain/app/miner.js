@@ -17,16 +17,16 @@ class Miner {
    */
   mine() {
     const validTransactions = this.txPool.getValidTxs();
-    validTransactions.push( 
+    validTransactions.push(
       // include reward for mine
       Transaction.rewardTransaction(this.wallet, Wallet.blockchainWallet())
     );
-    const minedBlock = this.blockchain.addBlock(validTransactions); 
+    const minedBlock = this.blockchain.addBlock(validTransactions);
     // sync the chains via p2pServer
-    this.p2pServer.broadcastUpdatedChain(); 
+    this.p2pServer.broadcastUpdatedChain();
     this.txPool.clear();
     // broadcast to other miners to clear their txPool as well
-    this.p2pServer.broadcastClearTransaction(); 
+    this.p2pServer.broadcastClearTransaction();
 
     return minedBlock;
   }

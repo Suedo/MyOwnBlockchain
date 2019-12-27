@@ -1,7 +1,7 @@
 const TransactionPool = require("./TransactionPool");
 const Transaction = require("./Transaction");
 const Wallet = require(".");
-const Blockchain = require('../blockchain')
+const Blockchain = require("../blockchain");
 
 describe("TransactionPool", () => {
   let tp, transaction, wallet, txAmount, recipient, bc;
@@ -39,10 +39,10 @@ describe("TransactionPool", () => {
     ).toEqual(20);
   });
 
-  it('clears the transaction pool', () => {
+  it("clears the transaction pool", () => {
     tp.clear();
-    expect(tp.transactions).toEqual([])
-  })
+    expect(tp.transactions).toEqual([]);
+  });
 
   describe("Mix valid and invalid Transactions", () => {
     let validTxs;

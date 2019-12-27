@@ -1,4 +1,4 @@
-const Transaction = require('./Transaction')
+const Transaction = require("./Transaction");
 class TransactionPool {
   constructor() {
     this.transactions = [];
@@ -18,33 +18,31 @@ class TransactionPool {
     }
   }
 
-
   /**
    * Both getTxForGivenSource and getTxForGivenRecipient aims to do the same thing,
    * one works with source address, while the other one with recipient address
    * @param {*} publicKey address of the wallet
    */
-  getTxForGivenSource(publicKey){
-    return this.transactions.find(t => t.input.address === publicKey)
+  getTxForGivenSource(publicKey) {
+    return this.transactions.find(t => t.input.address === publicKey);
   }
 
   getTxForGivenRecipient(publicKey) {
     return this.transactions.filter(t =>
       t.outputs.some(op => op.address === publicKey)
-    )[0]; 
+    )[0];
     // return 1st elem, or undefined
-    // without the `[0]`, if nothing found, would return a blank array, 
+    // without the `[0]`, if nothing found, would return a blank array,
     // which would cause failure
   }
 
   getValidTxs() {
-    return this.transactions.filter(tx => Transaction.isTransactionValid(tx))    
+    return this.transactions.filter(tx => Transaction.isTransactionValid(tx));
   }
 
   clear() {
-    this.transactions = []
+    this.transactions = [];
   }
-
 }
 
 module.exports = TransactionPool;
