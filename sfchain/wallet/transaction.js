@@ -1,4 +1,5 @@
 const ChainUtil = require("../chain.util");
+const { MINING_REWARD } = require("../config");
 
 class Transaction {
   constructor() {
@@ -35,32 +36,44 @@ class Transaction {
     return this;
   }
 
+  static transactionWithOutputs(sourceWallet, outputs) {
+    const transaction = new Transaction();
+    // the `...` spreads out the array to individual objects for push.
+    transaction.outputs.push(...outputs)
+    Transaction.signTransaction(transaction, sourceWallet);
+    return transaction;
+  }
+
   // a static method to help generate outputs
   static newTransaction(sourceWallet, recipientAddr, txAmount) {
-    const transaction = new Transaction();
 
     if (txAmount > sourceWallet.balance) {
       console.log(`Amount: ${txAmount} exceeds balance`);
       return;
     }
 
-    // some destructuring tricks for learning purpose
-    // the `...` spreads out the array to individual objects for push. Thus, push happens twice here
-    transaction.outputs.push(
-      ...[
-        // this is the updated balance `sent` to self
-        {
-          amount: sourceWallet.balance - txAmount,
-          address: sourceWallet.publicKey
-        },
-        // this is the amount sent to the actual recipient
-        { amount: txAmount, address: recipientAddr }
-      ]
-    );
+    const outputs = [
+      // this is the updated balance `sent` to self
+      { 
+        amount: sourceWallet.balance - txAmount, 
+        address: sourceWallet.publicKey 
+      },
+      // this is the amount sent to the actual recipient
+      { amount: txAmount, address: recipientAddr }
+    ]
 
-    Transaction.signTransaction(transaction, sourceWallet);
+    return Transaction.transactionWithOutputs(sourceWallet, outputs);
 
-    return transaction;
+  }
+  /**
+   * blockchainWallet will sign the transaction to verify that it indeed is a reward
+   */
+  static rewardTransaction(minerWallet, blockchainWallet) {
+    let outputs = [{
+      amount: MINING_REWARD, address: minerWallet.publicKey
+    }]
+    return Transaction.transactionWithOutputs(blockchainWallet, outputs)
+
   }
 
   static signTransaction(transaction, sourceWallet) {

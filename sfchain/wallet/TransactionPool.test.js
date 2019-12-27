@@ -36,4 +36,32 @@ describe("TransactionPool", () => {
         .amount
     ).toEqual(20);
   });
+
+  it('clears the transaction pool', () => {
+    tp.clear();
+    expect(tp.transactions).toEqual([])
+  })
+
+  describe("Mix valid and invalid Transactions", () => {
+    let validTxs;
+
+    beforeEach(() => {
+      validTxs = [...tp.transactions]; // without this spread, equality test fails below
+      for (let i = 0; i < 6; i++) {
+        wallet = new Wallet();
+        tx = wallet.createTransaction("abcdefgh", 30, tp);
+        if (i % 2 == 0) {
+          tx.input.amount = 99999;
+        } else {
+          validTxs.push(tx);
+        }
+      }
+    });
+
+    // the course has one more extra test here, about validTxs !== tp.transactions
+
+    it("filters only valid transactions", () => {
+      expect(tp.getValidTxs()).toEqual(validTxs);
+    });
+  });
 });

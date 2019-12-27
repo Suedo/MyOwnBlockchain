@@ -43,6 +43,12 @@ class Wallet {
 
     return tx;
   }
+
+  static blockchainWallet() {
+    const blockchainWallet = new this();
+    blockchainWallet.publicKey = "blockchain-wallet";
+    return blockchainWallet;
+  }
 }
 
 module.exports = Wallet;

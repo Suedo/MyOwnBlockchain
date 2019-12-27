@@ -41,6 +41,10 @@ class TransactionPool {
     return this.transactions.filter(tx => Transaction.isTransactionValid(tx))    
   }
 
+  clear() {
+    this.transactions = []
+  }
+
 }
 
 module.exports = TransactionPool;

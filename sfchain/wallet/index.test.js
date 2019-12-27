@@ -16,7 +16,7 @@ describe("Wallet", () => {
     wallet.createTransaction(recipient, amountToSend, tp);
 
     // console.log(`double spend test:\n${JSON.stringify(transaction, null, 2)}`);
-    console.log(`double spend test:\n${JSON.stringify(tp, null, 2)}`);
+    // console.log(`double spend test:\n${JSON.stringify(tp, null, 2)}`);
 
     expect(
       transaction.outputs.find(op => op.address === wallet.publicKey).amount
@@ -32,25 +32,5 @@ describe("Wallet", () => {
         .map(op => op.amount)
     ).toEqual([amountToSend, amountToSend]);
   });
-
-  describe("Mix valid and invalid Transactions", () => {
-    let validTxs;
-
-    beforeEach(() => {
-      validTxs = [...tp.transactions]; // without this spread, equality test fails below
-      for (let i = 0; i < 6; i++) {
-        wallet = new Wallet();
-        tx = wallet.createTransaction("abcdefgh", 30, tp);
-        if (i % 2 == 0) {
-          tx.input.amount = 99999;
-        } else {
-          validTxs.push(tx);
-        }
-      }
-    });
-
-    it("filters only valid transactions", () => {
-      expect(tp.getValidTxs()).toEqual(validTxs);
-    });
-  });
+  
 });

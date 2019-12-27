@@ -1,3 +1,5 @@
+const Transaction = require("../wallet/Transaction");
+const Wallet = require("../wallet");
 class Miner {
   /**
    * @param {*} wallet for the miner to collect reward
@@ -15,11 +17,18 @@ class Miner {
    */
   mine() {
     const validTransactions = this.txPool.getValidTxs();
-    // TODO: include reward for mine
-    // TODO: create block with valid transactions
-    // TODO: sync the chains via p2pServer
-    // TODO: clear the txpool
-    // TODO: broadcast to other miners to clear their txPool as well
+    validTransactions.push( 
+      // include reward for mine
+      Transaction.rewardTransaction(this.wallet, Wallet.blockchainWallet())
+    );
+    const minedBlock = this.blockchain.addBlock(validTransactions); 
+    // sync the chains via p2pServer
+    this.p2pServer.broadcastUpdatedChain(); 
+    this.txPool.clear();
+    // broadcast to other miners to clear their txPool as well
+    this.p2pServer.broadcastClearTransaction(); 
+
+    return minedBlock;
   }
 }
 

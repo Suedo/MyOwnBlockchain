@@ -5,7 +5,8 @@ const PEERS = process.env.PEERS ? process.env.PEERS.split(",") : [];
 
 const MESSAGE_TYPES = {
   chain: "CHAIN",
-  transaction: "TRANSACTION"
+  transaction: "TRANSACTION",
+  clear_transactions: "CLEAR_TRANSACTIONS"
 };
 
 // HTTP_PORT=3002 P2P_PORT=5002 PEERS=ws://localhost:5001,ws://localhost:5002 npm run dev
@@ -41,17 +42,22 @@ class P2PServer {
     this.sendChainTo(peerSocket);
   }
 
+  // this is the syncChain method of the course
   // when a new block is mined, broadcast new updated blockchain to all connected peers
   broadcastUpdatedChain() {
     this.sockets.forEach(socket => this.sendChainTo(socket));
   }
 
   broadcastTransaction(tx) {
-    console.log(
-      `in broadcastTransaction:\nSocket count: ${this.sockets.length}`
-    );
+    // console.log(
+    //   `in broadcastTransaction:\nSocket count: ${this.sockets.length}`
+    // );
 
     this.sockets.forEach(s => this.sendTransactionTo(s, tx));
+  }
+
+  broadcastClearTransaction() {
+    this.sockets.forEach(s => this.sendClearSignalTo(s));
   }
 
   // each node in blockchain will emit its blockchain in its message
@@ -68,6 +74,9 @@ class P2PServer {
         case MESSAGE_TYPES.transaction:
           // console.log("received a transaction message..");
           this.transactionPool.addOrUpdateTransaction(data.value);
+          break;
+        case MESSAGE_TYPES.clear_transactions:
+          this.transactionPool.clear();
           break;
       }
     });
@@ -89,6 +98,17 @@ class P2PServer {
       JSON.stringify({
         type: MESSAGE_TYPES.transaction,
         value: tx
+      })
+    );
+  }
+
+  sendClearSignalTo(socket) {
+    console.log("sending clear signal..");
+    // payload value is irrelevant
+    socket.send(
+      JSON.stringify({
+        type: MESSAGE_TYPES.clear_transactions,
+        value: ""
       })
     );
   }
