@@ -50,15 +50,56 @@ describe("Wallet", () => {
       bc.addBlock(tp.transactions);
     });
 
-    
     it("calculates the balance for blockchain transactions matching the recipient", () => {
       // console.log(JSON.stringify(bc,null,2));
-      expect(wallet.calculateBalance(bc)).toEqual(INITIAL_BALANCE + (addBalance * repeatAdd));
+      expect(wallet.calculateBalance(bc)).toEqual(
+        INITIAL_BALANCE + addBalance * repeatAdd
+      );
     });
 
-    
     it("calculates the balance for blockchain transactions matching the sender", () => {
-      expect(senderWallet.calculateBalance(bc)).toEqual(INITIAL_BALANCE - (addBalance * repeatAdd));
+      expect(senderWallet.calculateBalance(bc)).toEqual(
+        INITIAL_BALANCE - addBalance * repeatAdd
+      );
     });
+
+    // describe("and recipient conducts a transaction", () => {
+    //   let substractBalance, recipientBalance;
+
+    //   /**
+    //    * Conduct a fresh set of txs from the otherwise recipient address
+    //    * we want the blockchain to contain only this 'reverse direction' txs
+    //    * so we need to clear out the txPool
+    //    */
+
+    //   beforeEach(() => {
+    //     tp.clear();
+    //     substractBalance = 60;
+    //     recipientBalance = wallet.calculateBalance(bc);
+    //     wallet.createTransaction(
+    //       senderWallet.publicKey,
+    //       substractBalance,
+    //       bc,
+    //       tp
+    //     );
+    //     bc.addBlock(tp.transactions);
+    //   });
+
+    //   describe("and sender sends another tx to the recipient", () => {
+    //     beforeEach(() => {
+    //       tp.clear();
+    //       console.log('running the last describe..')
+    //       senderWallet.createTransaction(wallet, addBalance, bc, tp);
+    //       bc.addBlock(tp.transactions);
+    //     });
+
+    //     // ie, this test will only calculate its own balance since the most recent tx
+    //     it("calculates the recipient balance only using tx since most recent one", () => {
+    //       expect(wallet.calculateBalance(bc)).toEqual(
+    //         recipientBalance - substractBalance + addBalance
+    //       );
+    //     });
+    //   });
+    // });
   });
 });
