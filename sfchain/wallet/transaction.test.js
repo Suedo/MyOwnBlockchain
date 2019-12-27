@@ -1,4 +1,4 @@
-const Transaction = require("./transaction");
+const Transaction = require("./Transaction");
 const Wallet = require(".");
 
 describe("Transaction", () => {
@@ -46,12 +46,12 @@ describe("Transaction", () => {
   it("validates a valid Transaction", () => {
     // courtesy beforeEach, we have a freshly created transaction, so we expect it to be valid
     // console.log(`validation: transaction: ${JSON.stringify(transaction, null, 2)}`);
-    expect(Transaction.verifyTransaction(transaction)).toBe(true);
+    expect(Transaction.isTxSignatureValid(transaction)).toBe(true);
   });
 
   it("invalidates a corrupted transaction", () => {
     transaction.outputs[0].amount = 50000;
-    expect(Transaction.verifyTransaction(transaction)).toBe(false);
+    expect(Transaction.isTxSignatureValid(transaction)).toBe(false);
   });
 
   // for testing transaction updates

@@ -1,6 +1,6 @@
 const ChainUtil = require("../chain.util");
 const { INITIAL_BALANCE } = require("../config");
-const Transaction = require("./transaction");
+const Transaction = require("./Transaction");
 
 class Wallet {
   constructor() {

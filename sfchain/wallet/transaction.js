@@ -72,12 +72,32 @@ class Transaction {
     };
   }
 
-  static verifyTransaction(transaction) {
+  static isTxSignatureValid(transaction) {
     return ChainUtil.verifySignature(
       transaction.input.signature,
       transaction.input.address,
       ChainUtil.hash(transaction.outputs)
     );
+  }
+
+  /**
+   * 1. total output amount equals input amount
+   * 2. valid signature
+   */
+  static isTransactionValid(tx) {
+    let totalOutputReducer = (acc, output) => acc + output.amount;
+    let totalOutput = tx.outputs.reduce(totalOutputReducer, 0);
+    if (tx.input.amount !== totalOutput) {
+      console.log(`Error: Input and Output amounts dont match for Transaction ${tx.id}`);
+      return;
+    }
+
+    if (!Transaction.isTxSignatureValid(tx)) {
+      console.log(`Error verifying Transaction signature \n${JSON.stringify(tx, null, 2)}`);
+      return;
+    }
+
+    return tx;
   }
 }
 

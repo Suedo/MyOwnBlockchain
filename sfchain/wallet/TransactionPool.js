@@ -1,8 +1,10 @@
+const Transaction = require('./Transaction')
 class TransactionPool {
   constructor() {
     this.transactions = [];
   }
 
+  // any tx is being added to pool. It's the miner's job to check for valid ones
   addOrUpdateTransaction(tx) {
     let transactionInPool = this.transactions.find(t => t.id === tx.id);
 
@@ -34,6 +36,11 @@ class TransactionPool {
     // without the `[0]`, if nothing found, would return a blank array, 
     // which would cause failure
   }
+
+  getValidTxs() {
+    return this.transactions.filter(tx => Transaction.isTransactionValid(tx))    
+  }
+
 }
 
 module.exports = TransactionPool;
