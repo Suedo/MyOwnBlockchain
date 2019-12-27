@@ -1,15 +1,17 @@
 const TransactionPool = require("./TransactionPool");
 const Transaction = require("./Transaction");
 const Wallet = require(".");
+const Blockchain = require('../blockchain')
 
 describe("TransactionPool", () => {
-  let tp, transaction, wallet, txAmount, recipient;
+  let tp, transaction, wallet, txAmount, recipient, bc;
 
   beforeEach(() => {
     tp = new TransactionPool();
     txAmount = 50;
     recipient = "r3c1p13nt";
     wallet = new Wallet();
+    bc = new Blockchain();
     transaction = Transaction.newTransaction(wallet, recipient, txAmount);
     tp.addOrUpdateTransaction(transaction);
   });
@@ -49,7 +51,7 @@ describe("TransactionPool", () => {
       validTxs = [...tp.transactions]; // without this spread, equality test fails below
       for (let i = 0; i < 6; i++) {
         wallet = new Wallet();
-        tx = wallet.createTransaction("abcdefgh", 30, tp);
+        tx = wallet.createTransaction("abcdefgh", 30, bc, tp);
         if (i % 2 == 0) {
           tx.input.amount = 99999;
         } else {

@@ -28,7 +28,7 @@ app.get("/transactions", (req, res) => {
 
 app.post("/transact", (req, res) => {
   const { recipient, amount } = req.body;
-  const tx = wallet.createTransaction(recipient, amount, tp);
+  const tx = wallet.createTransaction(recipient, amount, bc, tp);
   // ^^ transaction already updated to pool, so we should now be able to see it
 
   p2pServer.broadcastTransaction(tx);
